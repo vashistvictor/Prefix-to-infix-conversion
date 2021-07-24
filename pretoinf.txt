@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int top=10;
+
+struct node
+{
+    char data;
+    struct node* next;
+    struct node* prev;
+}*stack[10];
+
+int isoperand(char c)
+{
+    if(c=='+' || c=='-' || c=='*' || c=='/' || c=='^' ||c=='(' || c==')')
+        return 0;
+    else
+        return 1;
+}
+
+struct node* pop()
+{
+    if(top >= 10)
+    {
+        printf("there is no element to be popped\n");
+    }
+    else
+    {
+        struct node *temp;
+        temp = stack[++top];
+        return temp;
+    }
+}
+
+void push(struct node* new)
+{
+    if(top<=0)
+    {
+        printf("no more element can be pushed\n");
+    }
+    else
+    {
+        stack[top]=new;
+        top--;
+    }
+}
+
+void postoin(char poexp[])
+{
+    int n,i;
+    char inexp[50];
+    n = strlen(poexp);
+    for(i=n-1;poexp[i];i--)
+    {
+        if(isoperand(poexp[i]))
+        {
+            struct node* new = (struct node*)malloc(sizeof(struct node));
+            new->data = poexp[i];
+            new->prev = NULL;
+            new->next = NULL;
+            push(new);
+        }
+        else 
+        {
+            struct node* c1 = pop();
+            struct node* c2 = pop();
+            struct node* te;
+            te = (struct node*)malloc(sizeof(struct node));
+            te->data = poexp[i];
+            te->next = c2;
+            te->prev = c1;
+            push(te);
+        }
+    }
+}
+
+void display(struct node *temp)
+{
+    if(temp != NULL)
+    {
+        display(temp->prev);
+        printf("%c",temp->data);
+        display(temp->next);
+    }
+}
+
+int main() 
+{
+    char poexp[50];
+    scanf("%s",poexp);
+    postoin(poexp);
+    display(pop());
+    return 0;
+}
+
